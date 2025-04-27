@@ -4,6 +4,7 @@ import { useState } from 'react';
 const AuthPages = () => {
   const [activeTab, setActiveTab] = useState('login');
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -32,11 +33,12 @@ const AuthPages = () => {
       borderRadius: '16px',
       boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
       width: '100%',
-      maxWidth: '800px',
-      padding: '4rem',
+      maxWidth: '1000px',
+      padding: '3rem',
       display: 'grid',
       gridTemplateColumns: '1fr 1fr',
-      gap: '4rem'
+      gap: '3rem',
+      alignItems: 'center'
     },
     leftPanel: {
       background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
@@ -46,7 +48,8 @@ const AuthPages = () => {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
-      textAlign: 'center'
+      textAlign: 'center',
+      height: '100%'
     },
     tabsContainer: {
       display: 'flex',
@@ -91,7 +94,7 @@ const AuthPages = () => {
       padding: '1rem',
       border: '1px solid #e2e8f0',
       borderRadius: '8px',
-      marginBottom: '1.5rem',
+      marginBottom: '1.2rem',
       fontSize: '1rem',
       transition: 'all 0.2s ease',
       outline: 'none',
@@ -126,6 +129,16 @@ const AuthPages = () => {
       ':hover': {
         textDecoration: 'underline'
       }
+    },
+    rightSideContent: {
+      marginTop: '2rem',
+      textAlign: 'center'
+    },
+    animationImage: {
+      width: '100%',
+      height: 'auto',
+      marginTop: '2rem',
+      borderRadius: '12px'
     }
   };
 
@@ -133,14 +146,21 @@ const AuthPages = () => {
     <div style={styles.container}>
       <div style={styles.card}>
         <div style={styles.leftPanel}>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', fontWeight: '900' }}>
+          <h2 style={{ fontSize: '1.8rem', marginBottom: '1rem', fontWeight: '900' }}>
             {activeTab === 'login' ? 'Custom AI Solution Application' : 'Get Started'}
           </h2>
           <p style={{ fontSize: '1.1rem', opacity: 0.9, lineHeight: '1.6' }}>
             {activeTab === 'login' 
               ? 'Sign in to access your custom AI experience' 
-              : 'Create an account to unlock all features'}
+              : 'Create an account to unlock all AI-powered features'}
           </p>
+          <div style={styles.rightSideContent}>
+            <img 
+              src="https://cdn.dribbble.com/users/1467983/screenshots/17498673/media/09b4e6e6b2678f34219e08df0938f9cb.gif" 
+              alt="AI Animation"
+              style={styles.animationImage}
+            />
+          </div>
         </div>
 
         <div style={{ position: 'relative' }}>
@@ -166,7 +186,7 @@ const AuthPages = () => {
           </div>
 
           {activeTab === 'login' ? (
-            <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <form style={{ display: 'flex', flexDirection: 'column' }}>
               <div>
                 <label style={styles.inputLabel}>Email Address</label>
                 <input
@@ -203,7 +223,18 @@ const AuthPages = () => {
               </div>
             </form>
           ) : (
-            <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <form style={{ display: 'flex', flexDirection: 'column' }}>
+              <div>
+                <label style={styles.inputLabel}>Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  style={styles.inputField}
+                  placeholder="Enter your full name"
+                  onChange={handleInputChange}
+                />
+              </div>
+
               <div>
                 <label style={styles.inputLabel}>Email Address</label>
                 <input

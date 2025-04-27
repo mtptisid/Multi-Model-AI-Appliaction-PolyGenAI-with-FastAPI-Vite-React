@@ -7,6 +7,7 @@ export const login = async (credentials) => {
     const response = await axios.post(
       `${API_BASE}/login`,
       new URLSearchParams({
+        name: credentials.name,
         username: credentials.email,
         password: credentials.password,
         grant_type: 'password'
