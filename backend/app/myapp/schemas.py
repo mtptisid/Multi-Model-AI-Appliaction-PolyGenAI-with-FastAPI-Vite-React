@@ -3,16 +3,25 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 
 class User(BaseModel):
+    name: str
     email: EmailStr
     password: str
 
 class ShowUser(BaseModel):
+    id: int
+    name: str
     email: EmailStr
     class Config:
         from_attributes = True
 
+# Update schema for user details
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    password: Optional[str] = None
+
 class ShowallUser(BaseModel):
     id: int
+    name: str
     email: EmailStr
 
     class Config:
@@ -31,6 +40,7 @@ class TokenData(BaseModel):
 
 class MessageCreate(BaseModel):
     content: str
+    model: str
     session_id: Optional[int] = None
 
 class MessageResponse(BaseModel):

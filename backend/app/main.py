@@ -25,7 +25,7 @@ app.add_middleware(
 )
 
 # Database setup
-# models.Base.metadata.drop_all(bind=engine)
+#models.Base.metadata.drop_all(bind=engine)
 models.Base.metadata.create_all(engine)
 
 # Include routers

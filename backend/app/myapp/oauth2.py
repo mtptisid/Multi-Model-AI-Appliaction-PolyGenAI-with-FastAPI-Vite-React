@@ -4,7 +4,7 @@ from jose import jwt, JWTError
 from sqlalchemy.orm import Session
 from . import schemas, database, models, token
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 def get_current_user(data: str = Depends(oauth2_scheme), 
                      db: Session = Depends(database.get_db)
@@ -18,6 +18,7 @@ def get_current_user(data: str = Depends(oauth2_scheme),
     try:
         # Verify and decode token
         payload = token.verify_token(data, credentials_exception)
+        
         email = payload.email
         
         # Fetch user from database

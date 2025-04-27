@@ -4,7 +4,7 @@ from sqlalchemy.sql import func
 from .. import schemas, database, models, oauth2
 from datetime import datetime
 from typing import Optional
-from ..services.ai import gemini_service
+from ..services.ai import ai_manager
 
 router = APIRouter(
     prefix="/api/ai_chat",
@@ -12,7 +12,7 @@ router = APIRouter(
     dependencies=[Depends(oauth2.get_current_user)]
 )
 
-@router.get("/")
+@router.get("/home")
 async def get_chat_sessions(
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
@@ -61,54 +61,43 @@ async def get_chat_sessions(
 
     return session_responses
 
-
 @router.post("/request", response_model=schemas.MessageResponse)
 async def send_message(
     message: schemas.MessageCreate,
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
-    """Send message to AI and save conversation"""
-
     if not current_user:
         raise HTTPException(status_code=401, detail="User not authenticated")
 
     if not message.content.strip():
         raise HTTPException(status_code=400, detail="Message content cannot be empty")
 
-    # ✅ Use session_id from frontend, or generate a new one
     session_id = message.session_id
     if not session_id:
         max_session = db.query(func.max(models.ChatConversation.session_id)).scalar()
         session_id = (max_session or 0) + 1
 
+    # Fetch memory for chat
+    past_messages = db.query(models.ChatConversation).filter_by(
+        user_id=current_user.id,
+        session_id=session_id
+    ).order_by(models.ChatConversation.timestamp.asc()).all()
+
+    chat_history = [
+        {"role": "assistant" if msg.is_bot else "user", "content": msg.content}
+        for msg in past_messages
+    ]
+    chat_history.append({"role": "user", "content": message.content})
+
     # Save user message
-    user_message = save_message_to_db(
-        db,
-        current_user.id,
-        message.content,
-        session_id,
-        is_bot=False
-    )
+    save_message_to_db(db, current_user.id, message.content, session_id, is_bot=False)
 
-    # Get AI response
-    try:
-        ai_response = await gemini_service.get_response(message.content)
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(
-            status_code=503,
-            detail=f"Error while getting AI response: {str(e)}"
-        )
+    # AI response
+    ai_response = await ai_manager.get_response(message.model, chat_history)
 
-    # Save AI response
-    bot_message = save_message_to_db(
-        db,
-        current_user.id,
-        ai_response,
-        session_id,
-        is_bot=True
-    )
+    # Save bot response
+    bot_message = save_message_to_db(db, current_user.id, ai_response, session_id, is_bot=True)
 
     return schemas.MessageResponse(
         content=bot_message.content,
@@ -117,35 +106,48 @@ async def send_message(
         timestamp=bot_message.timestamp
     )
 
-
-def save_message_to_db(
-    db: Session,
-    user_id: int,
-    content: str,
-    session_id: int,
-    is_bot: bool
-) -> models.ChatConversation:
-    """Save a message to the chat_conversations table"""
-
-    # For first message in a session, set title and session_created_at
-    is_new_session = not db.query(models.ChatConversation).filter(
-        models.ChatConversation.user_id == user_id,
-        models.ChatConversation.session_id == session_id
+@router.delete("/{chat_id}")
+async def delete_chat_session(
+    chat_id: int,
+    db: Session = Depends(database.get_db),
+    current_user: models.User = Depends(oauth2.get_current_user)
+):
+    """Delete a specific chat session and all its messages"""
+    # Verify the chat session exists and belongs to the user
+    session_exists = db.query(models.ChatConversation).filter(
+        models.ChatConversation.user_id == current_user.id,
+        models.ChatConversation.session_id == chat_id
     ).first()
 
-    session_title = content[:25] if is_new_session else None
-    session_created_at = datetime.utcnow() if is_new_session else None
+    if not session_exists:
+        raise HTTPException(status_code=404, detail="Chat session not found")
 
-    new_message = models.ChatConversation(
+    # Delete all messages in the session
+    db.query(models.ChatConversation).filter(
+        models.ChatConversation.user_id == current_user.id,
+        models.ChatConversation.session_id == chat_id
+    ).delete()
+
+    db.commit()
+    return {"message": "Chat session deleted successfully"}
+
+def save_message_to_db(db, user_id, content, session_id, is_bot):
+    is_new_session = not db.query(models.ChatConversation).filter_by(
+        user_id=user_id,
+        session_id=session_id
+    ).first()
+
+    message = models.ChatConversation(
         user_id=user_id,
         session_id=session_id,
-        title=session_title,
-        session_created_at=session_created_at,
         content=content,
         is_bot=is_bot,
-        timestamp=datetime.utcnow()
+        timestamp=datetime.utcnow(),
+        title=content[:25] if is_new_session else None,
+        session_created_at=datetime.utcnow() if is_new_session else None
     )
-    db.add(new_message)
+
+    db.add(message)
     db.commit()
-    db.refresh(new_message)
-    return new_message
+    db.refresh(message)
+    return message
