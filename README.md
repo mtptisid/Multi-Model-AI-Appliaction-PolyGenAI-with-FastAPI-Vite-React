@@ -248,6 +248,12 @@ The frontend interacts with the following backend endpoints (based on `HomePage.
 | `/api/auth/login` | POST | Authenticates a user and returns a JWT | `Content-Type: application/json` | `{ email, password }` |
 | `/api/user/profile` | PUT | Updates user profile (name, password) | `Authorization: Bearer <token>`, `Content-Type: application/json` | `{ name, password }` |
 
+
+Check out the all Endpoints and schemas in details.
+
+[FASTAPI SWAGGER-UI](https://github.com/mtptisid/Multi-Model-AI-Appliaction-PolyGenAI-with-FastAPI-Vite-React/blob/master/FastAPI%20-%20Swagger%20UI%20-%20polygenix.pdf)
+
+
 ### Example Request (Send AI Message)
 ```bash
 curl -X POST http://localhost:8000/api/ai_chat/request \
