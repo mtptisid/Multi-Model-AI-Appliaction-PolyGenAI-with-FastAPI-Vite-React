@@ -39,7 +39,7 @@ def showemail(email: str, db: Session):
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User with the id {id} is not available"
+            detail=f"User with the email {email} is not available"
         )
     return user
 

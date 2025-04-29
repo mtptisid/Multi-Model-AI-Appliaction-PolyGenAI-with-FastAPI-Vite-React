@@ -60,17 +60,14 @@ const AuthPages = () => {
     }
   };
 
-  // --------------------------
-  // MODIFIED STYLES START HERE
-  // --------------------------
   const styles = {
     container: {
-      minHeight: '100vh',
+      minHeight: '90vh',
       backgroundColor: '#f8fafc',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      width: '100%',
+      width: '97vw',
       margin: 0,
       padding: '2rem'
     },
@@ -91,13 +88,38 @@ const AuthPages = () => {
       padding: '3rem',
       color: 'white',
       display: 'flex',
-      flexDirection: 'column',
       justifyContent: 'center',
-      textAlign: 'center',
+      alignItems: 'center',
       position: 'relative',
       overflow: 'hidden',
       transformStyle: 'preserve-3d',
       perspective: '1000px',
+    },
+    animationCard: {
+      width: '100%',
+      height: '100%',
+      position: 'relative',
+      transformStyle: 'preserve-3d',
+      transition: 'transform 0.3s ease',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    cardFace: {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      backfaceVisibility: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '3rem',
+      borderRadius: '12px',
+      background: 'rgba(255, 255, 255, 0.1)',
+      boxShadow: '0 0 30px rgba(79, 195, 247, 0.3)',
+      transformStyle: 'preserve-3d',
+      backdropFilter: 'blur(8px)'
     },
     formPanel: {
       position: 'relative'
@@ -139,7 +161,7 @@ const AuthPages = () => {
     tabButton: {
       flex: 1,
       padding: '1rem 2rem',
-      fontWeight: '600',
+      fontWeight: '700',
       fontSize: '1rem',
       cursor: 'pointer',
       transition: 'all 0.3s ease',
@@ -189,7 +211,7 @@ const AuthPages = () => {
       borderRadius: '8px',
       border: 'none',
       cursor: 'pointer',
-      fontWeight: '600',
+      fontWeight: '700',
       fontSize: '1rem',
       transition: 'all 0.2s ease',
       marginTop: '1rem',
@@ -245,38 +267,59 @@ const AuthPages = () => {
       }
     }
 
-    .left-panel-content {
-      transform-style: preserve-3d;
-      position: relative;
-      z-index: 2;
+    @keyframes particleOrbit {
+      0% {
+        transform: translate(0, 0) rotate(0deg) translateZ(0);
+        opacity: 0.8;
+      }
+      50% {
+        transform: translate(30px, -30px) rotate(180deg) translateZ(100px);
+        opacity: 0.4;
+      }
+      100% {
+        transform: translate(0, 0) rotate(360deg) translateZ(0);
+        opacity: 0.8;
+      }
     }
 
-    .left-panel-title {
-      animation: floatIn 1.5s cubic-bezier(0.23, 1, 0.32, 1) forwards,
-                 textGlow 3s ease-in-out infinite;
-      font-size: 2.2rem !important;
-      letter-spacing: -0.5px;
-      margin-bottom: 2rem !important;
-      background: linear-gradient(45deg, #4fc3f7 0%, #fff 100%);
+    .animation-card:hover {
+      transform: rotateY(5deg) rotateX(5deg) scale(1.05);
+    }
+
+    .card-face {
+      transform: translateZ(50px);
+    }
+
+    .card-title {
+      font-size: 2.6rem;
+      font-weight: 800;
+      background: linear-gradient(45deg, #4fc3f7, #ffffff);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-      font-weight: 900;
+      animation: textGlow 2s ease-in-out infinite,
+                 floatIn 1.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      transform: translateZ(80px);
+      margin-bottom: 1.5rem;
+      text-align: 'center';
     }
 
-    .left-panel-text {
-      animation: floatIn 1.5s 0.3s cubic-bezier(0.23, 1, 0.32, 1) forwards,
-                 textGlow 3s 0.3s ease-in-out infinite;
-      opacity: 0.9;
+    .card-tagline {
+      font-size: 1.5rem;
+      color: #ffffff;
+      animation: floatIn 1.5s 0.3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      transform: translateZ(60px);
+      text-align: center;
+      max-width: 80%;
       line-height: 1.6;
-      font-size: 1.2rem !important;
-      position: relative;
-      padding: 1rem;
-      background: rgba(0, 0, 0, 0.15);
-      border-radius: 8px;
-      backdrop-filter: blur(4px);
-      transform: translateZ(50px);
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(79, 195, 247, 0.6), transparent);
+      animation: particleOrbit 4s ease-in-out infinite;
+      pointer-events: none;
     }
 
     .left-panel::before {
@@ -314,24 +357,59 @@ const AuthPages = () => {
     }
   `;
 
-  // ------------------------
-  // REST OF YOUR ORIGINAL JSX
-  // ------------------------
+  const handleMouseMove = (e) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = (y - centerY) / 20;
+    const rotateY = (centerX - x) / 20;
+
+    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+  };
+
+  const handleMouseLeave = (e) => {
+    e.currentTarget.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+  };
+
   return (
     <>
       <style>{animationStyles}</style>
       <div style={styles.container}>
         <div style={styles.card}>
           <div style={styles.leftPanel}>
-            <div className="left-panel-content">
-              <h2 className="left-panel-title">
-                {activeTab === 'login' ? 'Custom AI Solution Application' : 'Get Started'}
-              </h2>
-              <p className="left-panel-text">
-                {activeTab === 'login' 
-                  ? 'Sign in to access your custom AI experience' 
-                  : 'Create an account to unlock all features'}
-              </p>
+            <div
+              style={styles.animationCard}
+              className="animation-card"
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+            >
+              <div style={styles.cardFace} className="card-face">
+                <h2 className="card-title">
+                  {activeTab === 'login' ? 'Custom AI Solution Application' : 'Get Started'}
+                </h2>
+                <p className="card-tagline">
+                  {activeTab === 'login'
+                    ? 'Sign in to access your custom AI experience'
+                    : 'Create an account to unlock all features'}
+                </p>
+              </div>
+              {[...Array(15)].map((_, i) => (
+                <div
+                  key={i}
+                  className="particle"
+                  style={{
+                    width: `${8 + Math.random() * 12}px`,
+                    height: `${8 + Math.random() * 12}px`,
+                    top: `${Math.random() * 100}%`,
+                    left: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 3}s`,
+                    transform: `translateZ(${Math.random() * 100 - 50}px)`
+                  }}
+                />
+              ))}
             </div>
           </div>
 
@@ -391,7 +469,7 @@ const AuthPages = () => {
                   <a style={styles.link}>Forgot password?</a>
                 </div>
 
-                <button 
+                <button
                   style={styles.primaryButton}
                   type="submit"
                   disabled={loading}
@@ -460,7 +538,7 @@ const AuthPages = () => {
                   />
                 </div>
 
-                <button 
+                <button
                   style={styles.primaryButton}
                   type="submit"
                   disabled={loading}

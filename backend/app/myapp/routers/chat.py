@@ -17,7 +17,9 @@ async def get_chat_sessions(
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
-    return {"message": "Welcome to My AI Applications"}
+    name = current_user.name
+    return {"data": {"message": f"Welcome to your Custom AI Application PolyGenAI - {name}",
+                     "submsg": "Select the AI model to get started"}}
 
 @router.get("/history", response_model=list[schemas.ChatSessionResponse])
 async def get_chat_sessions(

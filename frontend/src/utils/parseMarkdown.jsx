@@ -19,30 +19,57 @@ const emojiMap = {
   'Good': '🎉'
 };
 
+// Function to escape HTML special characters
+const escapeHtml = (text) => {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
+
 const parseMarkdown = (text, handleCopy, copiedStates, messageIndex) => {
   if (!text) return null;
 
-  // Language-specific keywords and styles
+  // Syntax highlighting function
   const syntaxHighlight = (code, language) => {
     let highlightedCode = code;
 
-    // Define language-specific rules
+    // Language-specific rules
     const rules = {
       python: {
+        useLineProcessing: true,
+        lineCommentChar: '#',
         keywords: /\b(def|class|if|else|elif|for|while|return|import|from|as|try|except|with|in|is|not|and|or|True|False|None)\b/g,
         comments: /#.*$/gm,
         variables: /def\s+(\w+)/g,
-        strings: /("[^"]*"|'[^']*')/g,
-        keywordColor: '#6a0dad', // Purple
-        commentColor: '#008000', // Green
-        variableColor: '#87ceeb', // Sky blue
-        stringColor: '#ff0000' // Red
+        strings: /"(\\"|[^"])*"|'(\\'|[^'])*'/g,
+        keywordColor: '#5aabed',
+        commentColor: '#008000',
+        variableColor: '#f0bd24',
+        stringColor: '#d6321c'
+      },
+      bash: {
+        useLineProcessing: true,
+        lineCommentChar: '#',
+        keywords: /\b(if|then|else|fi|for|while|do|done|case|esac|function|export|source|echo|read|set|unset|alias|declare|typeset|local|shift|test|eval|exec)\b/g,
+        comments: /#.*$/gm,
+        shebangs: /#!\/bin\/(bash|sh)/g,
+        variables: /(\$[\w@]+|\${[\w@]+})/g,
+        strings: /"(\\"|[^"])*"|'(\\'|[^'])*'/g,
+        keywordColor: '#6a0dad',
+        commentColor: '#008000',
+        shebangColor: '#008000',
+        variableColor: '#87ceeb',
+        stringColor: '#ff0000'
       },
       javascript: {
         keywords: /\b(function|const|let|var|if|else|for|while|return|import|export|from|as|try|catch|new|this|true|false|null|undefined)\b/g,
         comments: /(\/\/.*$)|(\/\*[\s\S]*?\*\/)/gm,
         variables: /(const|let|var)\s+(\w+)/g,
-        strings: /("[^"]*"|'[^']*')/g,
+        strings: /"(\\"|[^"])*"|'(\\'|[^'])*'/g,
         keywordColor: '#6a0dad',
         commentColor: '#008000',
         variableColor: '#87ceeb',
@@ -52,47 +79,37 @@ const parseMarkdown = (text, handleCopy, copiedStates, messageIndex) => {
         keywords: /\b(public|private|protected|class|interface|void|int|double|float|boolean|if|else|for|while|return|new|try|catch|throw|throws|static|final|abstract|synchronized)\b/g,
         comments: /(\/\/.*$)|(\/\*[\s\S]*?\*\/)/gm,
         variables: /(int|double|float|boolean)\s+(\w+)/g,
-        strings: /("[^"]*"|'[^']*')/g,
+        strings: /"(\\"|[^"])*"|'(\\'|[^'])*'/g,
         keywordColor: '#6a0dad',
         commentColor: '#008000',
         variableColor: '#87ceeb',
         stringColor: '#ff0000'
       },
       html: {
-        keywords: /\b(div|span|p|h1|h2|h3|h4|h5|h6|a|img|ul|ol|li|table|tr|td|th|form|input|s|section|article|header|footer|nav|main|aside)\b/g,
+        keywords: /\b(div|span|p|h1|h2|h3|h4|h5|h6|a|img|ul|ol|li|table|tr|td|th|form|input|section|article|header|footer|nav|main|aside)\b/g,
         comments: /<!--[\s\S]*?-->/gm,
-        strings: /("[^"]*"|'[^']*')/g,
+        strings: /"(\\"|[^"])*"|'(\\'|[^'])*'/g,
         keywordColor: '#6a0dad',
         commentColor: '#008000',
         stringColor: '#ff0000'
-      },
-      bash: {
-        keywords: /\b(if|then|else|fi|for|while|do|done|case|esac|function|export|source|echo|read|set|unset|alias|declare|typeset|local|shift|test|eval|exec)\b/g,
-        comments: /#.*$/gm,
-        shebangs: /#!\/bin\/(bash|sh)/g,
-        variables: /(\$[\w@]+|\${[\w@]+})/g,
-        strings: /("[^"]*"|'[^']*')/g,
-        keywordColor: '#6a0dad',
-        commentColor: '#008000',
-        variableColor: '#87ceeb',
-        stringColor: '#ff0000',
-        shebangColor: '#008000'
       },
       cpp: {
         keywords: /\b(int|double|float|char|void|class|struct|namespace|public|private|protected|if|else|for|while|return|new|delete|try|catch|throw|using|const|static|virtual)\b/g,
         comments: /(\/\/.*$)|(\/\*[\s\S]*?\*\/)/gm,
         variables: /(int|double|float|char)\s+(\w+)/g,
-        strings: /("[^"]*"|'[^']*')/g,
+        strings: /"(\\"|[^"])*"|'(\\'|[^'])*'/g,
         keywordColor: '#6a0dad',
         commentColor: '#008000',
         variableColor: '#87ceeb',
         stringColor: '#ff0000'
       },
       ruby: {
+        useLineProcessing: true,
+        lineCommentChar: '#',
         keywords: /\b(def|class|module|if|else|elsif|for|while|return|require|include|extend|begin|rescue|ensure|end|true|false|nil)\b/g,
         comments: /#.*$/gm,
         variables: /def\s+(\w+)/g,
-        strings: /("[^"]*"|'[^']*')/g,
+        strings: /"(\\"|[^"])*"|'(\\'|[^'])*'/g,
         keywordColor: '#6a0dad',
         commentColor: '#008000',
         variableColor: '#87ceeb',
@@ -102,7 +119,7 @@ const parseMarkdown = (text, handleCopy, copiedStates, messageIndex) => {
         keywords: /\b(func|package|import|type|struct|interface|if|else|for|range|return|go|defer|chan|map|const|var|true|false|nil)\b/g,
         comments: /(\/\/.*$)|(\/\*[\s\S]*?\*\/)/gm,
         variables: /(var|const)\s+(\w+)/g,
-        strings: /("[^"]*"|'[^']*')/g,
+        strings: /"(\\"|[^"])*"|'(\\'|[^'])*'/g,
         keywordColor: '#6a0dad',
         commentColor: '#008000',
         variableColor: '#87ceeb',
@@ -112,7 +129,7 @@ const parseMarkdown = (text, handleCopy, copiedStates, messageIndex) => {
         keywords: /\b(function|class|if|else|for|while|return|echo|print|new|try|catch|public|private|protected|static|const|global|namespace)\b/g,
         comments: /(\/\/.*$)|(\/\*[\s\S]*?\*\/)|(#.*$)/gm,
         variables: /\$(\w+)/g,
-        strings: /("[^"]*"|'[^']*')/g,
+        strings: /"(\\"|[^"])*"|'(\\'|[^'])*'/g,
         keywordColor: '#6a0dad',
         commentColor: '#008000',
         variableColor: '#87ceeb',
@@ -121,7 +138,7 @@ const parseMarkdown = (text, handleCopy, copiedStates, messageIndex) => {
       css: {
         properties: /\b(color|background|margin|padding|border|font|display|flex|grid|position|width|height|top|right|bottom|left)\b/g,
         comments: /\/\*[\s\S]*?\*\//gm,
-        strings: /("[^"]*"|'[^']*')/g,
+        strings: /"(\\"|[^"])*"|'(\\'|[^'])*'/g,
         propertyColor: '#6a0dad',
         commentColor: '#008000',
         stringColor: '#ff0000'
@@ -129,18 +146,20 @@ const parseMarkdown = (text, handleCopy, copiedStates, messageIndex) => {
       sql: {
         keywords: /\b(SELECT|FROM|WHERE|INSERT|UPDATE|DELETE|JOIN|LEFT|RIGHT|INNER|OUTER|GROUP|BY|ORDER|HAVING|CREATE|TABLE|INDEX|VIEW|PROCEDURE|FUNCTION|TRIGGER|PRIMARY|FOREIGN|KEY)\b/g,
         comments: /(--.*$)|(\/\*[\s\S]*?\*\/)/gm,
-        strings: /("[^"]*"|'[^']*')/g,
+        strings: /"(\\"|[^"])*"|'(\\'|[^'])*'/g,
         keywordColor: '#6a0dad',
         commentColor: '#008000',
         stringColor: '#ff0000'
       },
       json: {
-        strings: /("[^"]*")/g,
+        strings: /"(\\"|[^"])*"/g,
         stringColor: '#ff0000'
       },
       yaml: {
+        useLineProcessing: true,
+        lineCommentChar: '#',
         comments: /#.*$/gm,
-        strings: /("[^"]*"|'[^']*')/g,
+        strings: /"(\\"|[^"])*"|'(\\'|[^'])*'/g,
         commentColor: '#008000',
         stringColor: '#ff0000'
       },
@@ -155,54 +174,131 @@ const parseMarkdown = (text, handleCopy, copiedStates, messageIndex) => {
     };
 
     const rule = rules[language] || {
-      strings: /("[^"]*"|'[^']*')/g,
+      strings: /"(\\"|[^"])*"|'(\\'|[^'])*'/g,
       stringColor: '#ff0000'
     };
 
-    // Apply highlighting in order to avoid overlaps
-    // 1. Comments (to prevent other patterns from matching inside comments)
-    if (rule.comments) {
-      highlightedCode = highlightedCode.replace(rule.comments, '<span style="color: #008000">$&</span>');
-    }
+    // Process languages with line comments line-by-line
+    if (rule.useLineProcessing && rule.lineCommentChar) {
+      const lines = code.split('\n');
+      const highlightedLines = lines.map(line => {
+        const commentChar = rule.lineCommentChar;
+        const commentIndex = line.indexOf(commentChar);
 
-    // 2. Shebangs (for bash)
-    if (rule.shebangs) {
-      highlightedCode = highlightedCode.replace(rule.shebangs, '<span style="color: #008000">$&</span>');
-    }
+        // Store strings to prevent keyword/variable highlighting inside them
+        let stringPlaceholders = [];
+        let placeholderIndex = 0;
+        let tempCodePart = line;
 
-    // 3. Strings
-    if (rule.strings) {
-      highlightedCode = highlightedCode.replace(rule.strings, '<span style="color: #ff0000">$1</span>');
-    }
+        if (rule.strings) {
+          tempCodePart = tempCodePart.replace(rule.strings, (match) => {
+            const placeholder = `@@STRING${placeholderIndex}@@`;
+            stringPlaceholders.push({ placeholder, content: match });
+            placeholderIndex++;
+            return placeholder;
+          });
+        }
 
-    // 4. Keywords or Properties
-    if (rule.keywords) {
-      highlightedCode = highlightedCode.replace(rule.keywords, '<span style="color: #6a0dad">$&</span>');
-    } else if (rule.properties) {
-      highlightedCode = highlightedCode.replace(rule.properties, '<span style="color: #6a0dad">$&</span>');
-    }
+        if (commentIndex !== -1) {
+          const codePart = tempCodePart.slice(0, commentIndex);
+          const commentPart = line.slice(commentIndex);
 
-    // 5. Variables
-    if (rule.variables) {
-      highlightedCode = highlightedCode.replace(rule.variables, (match, p1, p2) => {
-        const varName = p2 || p1; // p2 for most cases, p1 for Bash/PHP assignments
-        return match.replace(varName, `<span style="color: #87ceeb">${varName}</span>`);
+          // Highlight code part
+          let highlightedCodePart = escapeHtml(codePart);
+          if (rule.shebangs && line.startsWith('#!')) {
+            highlightedCodePart = highlightedCodePart.replace(rule.shebangs, (match) => `<span style="color: ${rule.shebangColor}">${escapeHtml(match)}</span>`);
+          }
+          if (rule.keywords) {
+            highlightedCodePart = highlightedCodePart.replace(rule.keywords, (match) => `<span style="color: ${rule.keywordColor}">${escapeHtml(match)}</span>`);
+          }
+          if (rule.variables) {
+            highlightedCodePart = highlightedCodePart.replace(rule.variables, (match, p1, p2) => {
+              const varName = p2 || p1;
+              return match.replace(varName, `<span style="color: ${rule.variableColor}">${escapeHtml(varName)}</span>`);
+            });
+          }
+
+          // Restore strings with red coloring
+          stringPlaceholders.forEach(({ placeholder, content }) => {
+            highlightedCodePart = highlightedCodePart.replace(placeholder, `<span style="color: ${rule.stringColor}">${escapeHtml(content)}</span>`);
+          });
+
+          // Highlight comment part
+          const highlightedCommentPart = `<span style="color: ${rule.commentColor}">${escapeHtml(commentPart)}</span>`;
+          return highlightedCodePart + highlightedCommentPart;
+        } else {
+          // No comment, highlight entire line
+          let highlightedLine = escapeHtml(tempCodePart);
+          if (rule.shebangs && line.startsWith('#!')) {
+            highlightedLine = highlightedLine.replace(rule.shebangs, (match) => `<span style="color: ${rule.shebangColor}">${escapeHtml(match)}</span>`);
+          }
+          if (rule.keywords) {
+            highlightedLine = highlightedLine.replace(rule.keywords, (match) => `<span style="color: ${rule.keywordColor}">${escapeHtml(match)}</span>`);
+          }
+          if (rule.variables) {
+            highlightedLine = highlightedLine.replace(rule.variables, (match, p1, p2) => {
+              const varName = p2 || p1;
+              return match.replace(varName, `<span style="color: ${rule.variableColor}">${escapeHtml(varName)}</span>`);
+            });
+          }
+
+          // Restore strings with red coloring
+          stringPlaceholders.forEach(({ placeholder, content }) => {
+            highlightedLine = highlightedLine.replace(placeholder, `<span style="color: ${rule.stringColor}">${escapeHtml(content)}</span>`);
+          });
+
+          return highlightedLine;
+        }
       });
-    }
+      highlightedCode = highlightedLines.join('\n');
+    } else {
+      // For languages without line processing, escape first then highlight
+      // Store strings to prevent keyword/variable highlighting inside them
+      let stringPlaceholders = [];
+      let placeholderIndex = 0;
+      let tempCode = highlightedCode;
 
-    // 6. Headers (for markdown)
-    if (rule.headers) {
-      highlightedCode = highlightedCode.replace(rule.headers, '<span style="color: #6a0dad">$2</span>');
-    }
+      if (rule.strings) {
+        tempCode = tempCode.replace(rule.strings, (match) => {
+          const placeholder = `@@STRING${placeholderIndex}@@`;
+          stringPlaceholders.push({ placeholder, content: match });
+          placeholderIndex++;
+          return placeholder;
+        });
+      }
 
-    // 7. Inline Code (for markdown)
-    if (rule.inlineCode) {
-      highlightedCode = highlightedCode.replace(rule.inlineCode, '<span style="color: #1e293b">$1</span>');
-    }
+      highlightedCode = escapeHtml(tempCode);
+      if (rule.comments) {
+        highlightedCode = highlightedCode.replace(rule.comments, (match) => `<span style="color: ${rule.commentColor}">${escapeHtml(match)}</span>`);
+      }
+      if (rule.shebangs) {
+        highlightedCode = highlightedCode.replace(rule.shebangs, (match) => `<span style="color: ${rule.shebangColor}">${escapeHtml(match)}</span>`);
+      }
+      if (rule.keywords) {
+        highlightedCode = highlightedCode.replace(rule.keywords, (match) => `<span style="color: ${rule.keywordColor}">${escapeHtml(match)}</span>`);
+      } else if (rule.properties) {
+        highlightedCode = highlightedCode.replace(rule.properties, (match) => `<span style="color: ${rule.propertyColor}">${escapeHtml(match)}</span>`);
+      }
+      if (rule.variables) {
+        highlightedCode = highlightedCode.replace(rule.variables, (match, p1, p2) => {
+          const varName = p2 || p1;
+          return match.replace(varName, `<span style="color: ${rule.variableColor}">${escapeHtml(varName)}</span>`);
+        });
+      }
+      if (rule.headers) {
+        highlightedCode = highlightedCode.replace(rule.headers, (match, p1, p2) => `<span style="color: ${rule.headerColor}">${escapeHtml(p2)}</span>`);
+      }
+      if (rule.inlineCode) {
+        highlightedCode = highlightedCode.replace(rule.inlineCode, (match, p1) => `<span style="color: ${rule.codeColor}">${escapeHtml(p1)}</span>`);
+      }
+      if (rule.links) {
+        highlightedCode = highlightedCode.replace(rule.links, (match, p1, p2) => `<span style="color: ${rule.linkColor}">${escapeHtml(p1)}</span>`);
+      }
 
-    // 8. Links (for markdown)
-    if (rule.links) {
-      highlightedCode = highlightedCode.replace(rule.links, '<span style="color: #3b82f6">$1</span>');
+      // Restore strings with red coloring
+      stringPlaceholders.forEach(({ placeholder, content }) => {
+        highlightedCode = highlightedCode.replace(placeholder, `<span style="color: ${rule.stringColor}">${escapeHtml(content)}</span>`);
+      });
     }
 
     return highlightedCode;
@@ -213,14 +309,11 @@ const parseMarkdown = (text, handleCopy, copiedStates, messageIndex) => {
   const parts = [];
   let lastIndex = 0;
 
-  // Process code blocks
   let match;
   while ((match = codeBlockRegex.exec(text)) !== null) {
-    // Add text before the code block
     if (match.index > lastIndex) {
       parts.push({ type: 'text', content: text.slice(lastIndex, match.index) });
     }
-    // Add the code block
     parts.push({
       type: 'code',
       language: match[1] ? match[1].toLowerCase() : '',
@@ -229,25 +322,19 @@ const parseMarkdown = (text, handleCopy, copiedStates, messageIndex) => {
     lastIndex = match.index + match[0].length;
   }
 
-  // Add remaining text after the last code block
   if (lastIndex < text.length) {
     parts.push({ type: 'text', content: text.slice(lastIndex) });
   }
 
   const components = [];
-  let listCounter = 0; // To ensure unique keys for lists
-  let codeBlockCounter = 0; // To ensure unique keys for code blocks
+  let listCounter = 0;
+  let codeBlockCounter = 0;
 
   parts.forEach((part, idx) => {
     if (part.type === 'code') {
       const codeBlockId = `code-block-${messageIndex}-${idx}-${codeBlockCounter++}`;
-      const highlightedCode = part.language in {
-        python: 1, javascript: 1, java: 1, html: 1, bash: 1,
-        cpp: 1, ruby: 1, go: 1, php: 1, css: 1, sql: 1,
-        json: 1, yaml: 1, markdown: 1
-      } ? syntaxHighlight(part.content, part.language) : part.content;
+      const highlightedCode = syntaxHighlight(part.content, part.language);
 
-      // Unified code block style
       const codeStyle = {
         background: '#2d2d2d',
         color: '#ffffff',
@@ -324,17 +411,14 @@ const parseMarkdown = (text, handleCopy, copiedStates, messageIndex) => {
       return;
     }
 
-    // Handle text parts (paragraphs, headings, lists, etc.)
     const paragraphs = part.content.split('\n\n').filter(p => p.trim());
 
     paragraphs.forEach((para, paraIdx) => {
-      // Handle separators
       if (para.trim() === '---' || para.trim() === '⸻') {
         components.push(<hr key={`sep-${idx}-${paraIdx}`} style={{ margin: '1rem 0', border: '1px solid #e2e8f0' }} />);
         return;
       }
 
-      // Handle headings (e.g., "**1. Heading:**")
       if (para.match(/^\*\*[0-9]+\.\s+.*:\*\*/)) {
         const headingText = para.replace(/^\*\*[0-9]+\.\s+/, '').replace(/:\*\*$/, '').trim();
         const emoji = Object.keys(emojiMap).find(key => headingText.includes(key)) ? emojiMap[Object.keys(emojiMap).find(key => headingText.includes(key))] : '';
@@ -346,17 +430,15 @@ const parseMarkdown = (text, handleCopy, copiedStates, messageIndex) => {
         return;
       }
 
-      // Handle lists (e.g., "* Item" or "  * Subitem")
       if (para.match(/^\s*\* /)) {
         const items = para.split('\n').filter(line => line.trim());
         const listItems = [];
         let currentList = [];
 
         items.forEach((item, i) => {
-          const indent = item.match(/^\s*/)[0].length / 2; // Count indentation (2 spaces = 1 level)
+          const indent = item.match(/^\s*/)[0].length / 2;
           const text = item.replace(/^\s*\* /, '').trim();
 
-          // Parse inline Markdown: bold, links, and inline code
           const parsedText = text
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #3b82f6; text-decoration: none; border-bottom: 1px solid #3b82f6;">$1</a>')
@@ -398,13 +480,11 @@ const parseMarkdown = (text, handleCopy, copiedStates, messageIndex) => {
         return;
       }
 
-      // Handle regular paragraphs with bold, links, inline code, and emojis
       let parsedPara = para
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #3b82f6; text-decoration: none; border-bottom: 1px solid #3b82f6;">$1</a>')
         .replace(/`([^`]+)`/g, '<code style="background: #f1f5f9; padding: 2px 4px; border-radius: 4px; color: #1e293b; font-family: monospace">$1</code>');
 
-      // Add emojis based on keywords
       Object.keys(emojiMap).forEach(key => {
         if (parsedPara.includes(key)) {
           parsedPara = `${emojiMap[key]} ${parsedPara}`;

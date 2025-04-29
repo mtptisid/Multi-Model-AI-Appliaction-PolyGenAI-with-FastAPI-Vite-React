@@ -31,7 +31,7 @@ def get_user(db: Session = Depends(get_db)):
 def get_user(id: int, db: Session = Depends(get_db)):
     return user.showid(id, db)
 
-@router.get('/{email}', response_model=schemas.ShowUser)
+@router.get('/email/{email}', response_model=schemas.ShowUser)
 def get_user(email: str, db: Session = Depends(get_db)):
     return user.showemail(email, db)
 
