@@ -1,6 +1,6 @@
-# PolyGenix
+# PolyGenAI
 
-**PolyGenix** is a cutting-edge web application designed to provide a unified platform for interacting with multiple Generative AI models, including DeepSeek R1, Gemini, Groq (with LLaMA), OpenAI, and Claude Sonet. With a sleek, animated user interface, robust chat functionality, and features like chat history management, markdown-parsed responses, and user profile customization, PolyGenix offers a seamless and engaging experience for users exploring AI capabilities. Whether you're a casual user curious about AI or a developer integrating multiple models, PolyGenix simplifies the process with an intuitive and visually appealing design.
+**PolyGenAI** is a cutting-edge web application designed to provide a unified platform for interacting with multiple Generative AI models, including DeepSeek R1, Gemini, Groq (with LLaMA), OpenAI, and Claude Sonet. With a sleek, animated user interface, robust chat functionality, and features like chat history management, markdown-parsed responses, and user profile customization, PolyGenAI offers a seamless and engaging experience for users exploring AI capabilities. Whether you're a casual user curious about AI or a developer integrating multiple models, PolyGenAI simplifies the process with an intuitive and visually appealing design.
 
 ## Table of Contents
 - [Overview](#overview)
@@ -19,7 +19,7 @@
 
 ## Overview
 
-PolyGenix aims to democratize access to Generative AI by allowing users to interact with multiple AI models through a single interface. The application features a modern frontend built with React, animated login/register pages, and a responsive chat interface where users can select their preferred AI model, send messages, and receive formatted responses. Key features include:
+PolyGenAI aims to democratize access to Generative AI by allowing users to interact with multiple AI models through a single interface. The application features a modern frontend built with React, animated login/register pages, and a responsive chat interface where users can select their preferred AI model, send messages, and receive formatted responses. Key features include:
 
 - **Multi-Model Support**: Seamlessly switch between DeepSeek, Gemini, Groq, OpenAI, and Claude.
 - **Animated UI**: Visually appealing login/register pages with smooth animations.
@@ -131,7 +131,7 @@ The backend (assumed to be Node.js/Express) handles authentication, chat history
 1. **Clone the Repository**:
    ```bash
    git clone https://github.com/mtptisid/Multi-Model-AI-Appliaction-PolyGenAI-with-FastAPI-Vite-React
-   cd Multi-Model-AI-Appliaction-PolyGenix-with-FastAPI-Vite-React
+   cd Multi-Model-AI-Appliaction-PolyGenAI-with-FastAPI-Vite-React
    ```
 
 2. **Install Frontend Dependencies**:
@@ -170,7 +170,7 @@ The backend (assumed to be Node.js/Express) handles authentication, chat history
    ```
    or
    ```bash
-   yarn start
+   npm run dev
    ```
    The frontend will run at `http://localhost:5173`.
 
@@ -195,7 +195,7 @@ The backend (assumed to be Node.js/Express) handles authentication, chat history
 
 ### User Flow
 1. **Register/Login**:
-   - Visit `http://localhost:3000` and click "Register" to create an account with email and password.
+   - Visit `http://localhost:5173` and click "Register" to create an account with email and password.
    - Log in to access the main chat interface (`HomePage.js`).
 
 2. **Start a Chat**:
@@ -384,7 +384,7 @@ backend/
 
 ## Contributing
 
-We welcome contributions to PolyGenix! To contribute:
+We welcome contributions to PolyGenAI! To contribute:
 1. Fork the repository.
 2. Create a feature branch:
    ```bash
@@ -414,8 +414,19 @@ Please adhere to the following:
   <img src="https://github.com/user-attachments/assets/3c3ec099-8e24-4a6f-a3c0-2411a07e378d" alt="Image 2" style="width: 48%;"/>
 </div>
 
+ - Home Page
 
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/user-attachments/assets/e35398ec-1369-48b4-a6c4-b68197bb787c" alt="Image 1" style="width: 48%;"/>
+  <img src="https://github.com/user-attachments/assets/a2d6deea-6674-42b9-a546-5443e2e3ef32" alt="Image 2" style="width: 48%;"/>
+</div>
 
+- Chat Page
+
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/user-attachments/assets/47905f4f-c2da-45df-bfee-8d220ebb1060" alt="Image 1" style="width: 48%;"/>
+  <img src="https://github.com/user-attachments/assets/8cfa0798-9922-49e1-a5cc-137e63a4b2f3" alt="Image 2" style="width: 48%;"/>
+</div>
 
 
 ## License
@@ -426,9 +437,9 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 For questions, suggestions, or support, please contact:
 - **Email**: msidrm455@gmail.com
-- **GitHub Issues**: [PolyGenix Issues](https://github.com/mtptisid/Multi-Model-AI-Appliaction-PolyGenAI-with-FastAPI-Vite-Reactissues)
+- **GitHub Issues**: [PolyGenAI Issues](https://github.com/mtptisid/Multi-Model-AI-Appliaction-PolyGenAI-with-FastAPI-Vite-Reactissues)
 
 ---
 
-**PolyGenix** - Your one-stop platform for exploring the power of Generative AI.
+**PolyGenAI** - Your one-stop platform for exploring the power of Generative AI.
 
