@@ -405,6 +405,19 @@ Please adhere to the following:
 - Include tests for new features.
 - Update documentation (e.g., this README) as needed.
 
+## Screenshots
+
+- Login and Register Pages
+  
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/user-attachments/assets/78171964-6e58-4e01-aa0e-63cfe01d31c8" alt="Image 1" style="width: 48%;"/>
+  <img src="https://github.com/user-attachments/assets/3c3ec099-8e24-4a6f-a3c0-2411a07e378d" alt="Image 2" style="width: 48%;"/>
+</div>
+
+
+
+
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
