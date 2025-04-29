@@ -130,7 +130,7 @@ The backend (assumed to be Node.js/Express) handles authentication, chat history
 ### Steps
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/mtptisid/Multi-Model-AI-Appliaction-PolyGenix-with-FastAPI-Vite-React
+   git clone https://github.com/mtptisid/Multi-Model-AI-Appliaction-PolyGenAI-with-FastAPI-Vite-React
    cd Multi-Model-AI-Appliaction-PolyGenix-with-FastAPI-Vite-React
    ```
 
