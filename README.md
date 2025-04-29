@@ -428,6 +428,13 @@ Please adhere to the following:
   <img src="https://github.com/user-attachments/assets/8cfa0798-9922-49e1-a5cc-137e63a4b2f3" alt="Image 2" style="width: 48%;"/>
 </div>
 
+- EndPoint and Schemas
+
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/user-attachments/assets/ee73e0df-240c-46e6-acd4-e6bdedc55282" alt="Image 1" style="width: 48%;"/>
+  <img src="https://github.com/user-attachments/assets/162e5737-3f66-4c5f-871b-c35bf087a240" alt="Image 2" style="width: 48%;"/>
+</div>
+  
 
 ## License
 
