@@ -2,20 +2,30 @@
 
 **PolyGenAI** is a cutting-edge web application designed to provide a unified platform for interacting with multiple Generative AI models, including DeepSeek R1, Gemini, Groq (with LLaMA), OpenAI, and Claude Sonet. With a sleek, animated user interface, robust chat functionality, and features like chat history management, markdown-parsed responses, and user profile customization, PolyGenAI offers a seamless and engaging experience for users exploring AI capabilities. Whether you're a casual user curious about AI or a developer integrating multiple models, PolyGenAI simplifies the process with an intuitive and visually appealing design.
 
-## Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Technologies](#technologies)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [API Endpoints](#api-endpoints)
-- [Project Structure](#project-structure)
-- [Development Notes](#development-notes)
-- [Future Enhancements](#future-enhancements)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+# 📖 Table of Contents
+
+## 🚀 Project Overview
+- [📌 Overview](#overview) – What this project does
+- [✨ Features](#features) – Key functionalities & highlights
+- [🛠️ Technologies Used](#technologies) – Tools, languages, and frameworks
+
+## 🧰 Getting Started
+- [📦 Installation](#installation) – How to install locally
+- [⚙️ Configuration](#configuration) – Setup and environment details
+- [🚀 Usage Guide](#usage) – How to run and use
+
+## 📡 API & Architecture
+- [🔗 API Endpoints](#api-endpoints) – Available routes and methods
+- [📁 Project Structure](#project-structure) – Folder and file layout
+- [📝 Development Notes](#development-notes) – Notes for contributors/devs
+
+## 🌱 Roadmap & Contribution
+- [🚧 Future Enhancements](#future-enhancements) – Planned upgrades/features
+- [🤝 Contributing](#contributing) – How to help & contribute
+
+## 🛡️ License & Support
+- [📄 License](#license) – Project usage rights
+- [📬 Contact](#contact) – Get in touch with us
 
 ## Overview
 
