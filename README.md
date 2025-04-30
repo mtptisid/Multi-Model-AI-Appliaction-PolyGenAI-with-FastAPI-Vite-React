@@ -263,7 +263,6 @@ curl -X POST http://localhost:8000/api/ai_chat/request \
     "content": "Explain blockchain technology",
     "model": "openai",
     "session_id": 67890,
-    "chat_id": null
   }'
 ```
 
@@ -272,7 +271,8 @@ curl -X POST http://localhost:8000/api/ai_chat/request \
 {
   "content": "## Blockchain Technology\n\nA blockchain is a decentralized, distributed ledger that records transactions across many computers. This ensures that the record is secure, transparent, and tamper-proof. Key features include:\n\n- **Decentralization**: No single authority controls the blockchain.\n- **Immutability**: Once data is written, it cannot be altered.\n- **Transparency**: All transactions are visible to participants.\n\n### How It Works\n1. A transaction is initiated.\n2. The transaction is broadcast to a network of nodes.\n3. Nodes validate the transaction using consensus algorithms.\n4. The validated transaction is added to a block.\n5. The block is appended to the blockchain and distributed to all nodes.\n\n### Use Cases\n- Cryptocurrencies (e.g., Bitcoin, Ethereum)\n- Supply chain management\n- Smart contracts\n- Healthcare record security\n\n```python\n# Example: Simple blockchain in Python\ndef create_block(data, prev_hash):\n    return {'data': data, 'prev_hash': prev_hash}\n```",
   "session_id": 67890,
-  "chat_id": 123
+  "chat_id": 123,
+  "is_bot": true
 }
 ```
 
@@ -317,22 +317,11 @@ frontend/
 backend/
 └── app
     ├── __pycache__
-    │   └── main.cpython-312.pyc
     ├── main.py
     ├── myapp
     │   ├── __init__.py
     │   ├── __pycache__
-    │   │   ├── __init__.cpython-312.pyc
-    │   │   ├── database.cpython-312.pyc
-    │   │   ├── hashing.cpython-312.pyc
-    │   │   ├── main.cpython-312.pyc
-    │   │   ├── models.cpython-312.pyc
-    │   │   ├── oauth2.cpython-312.pyc
-    │   │   ├── schemas.cpython-312.pyc
-    │   │   └── token.cpython-312.pyc
     │   ├── core
-    │   │   ├── __pycache__
-    │   │   │   └── config.cpython-312.pyc
     │   │   └── config.py
     │   ├── database.py
     │   ├── hashing.py
@@ -340,28 +329,22 @@ backend/
     │   ├── oauth2.py
     │   ├── repository
     │   │   ├── __pycache__
-    │   │   │   └── user.cpython-312.pyc
     │   │   └── user.py
     │   ├── routers
     │   │   ├── __init__.py
     │   │   ├── __pycache__
-    │   │   │   ├── __init__.cpython-312.pyc
-    │   │   │   ├── authentication.cpython-312.pyc
-    │   │   │   ├── chat.cpython-312.pyc
-    │   │   │   └── user.cpython-312.pyc
     │   │   ├── authentication.py
     │   │   ├── chat.py
     │   │   └── user.py
     │   ├── schemas.py
     │   ├── services
     │   │   ├── __pycache__
-    │   │   │   └── ai.cpython-312.pyc
     │   │   └── ai.py
     │   └── token.py
     ├── myapp.db
     └── requirements.txt
 
-12 directories, 33 files
+12 directories,
 ```
 
 ## Development Notes
